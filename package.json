@@ -1,0 +1,31 @@
+{
+  "name": "ghost-google-cloud-storage",
+  "version": "0.0.1",
+  "description": "A simple plugin to add Google Cloud Storage support for Ghost Blog",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thombuchi/ghost-google-cloud-storage.git"
+  },
+  "keywords": [
+    "ghost",
+    "google cloud",
+    "storage",
+    "plugin",
+    "blog"
+  ],
+  "author": "Thomas Büchi Sagredo <thombuchi@gmail.com>)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thombuchi/ghost-google-cloud-storage/issues"
+  },
+  "homepage": "https://github.com/thombuchi/ghost-google-cloud-storage",
+  "dependencies": {
+    "bluebird": "^3.1.1",
+    "gcloud": "^0.27.0",
+    "util": "^0.10.3"
+  }
+}
