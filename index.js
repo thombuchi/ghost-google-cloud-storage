@@ -56,5 +56,13 @@ GStore.prototype.serve = function() {
     };
 };
 
+GStore.prototype.exists = function (filename) {
+  return new Promise(function (resolve) {
+    fs.exists(filename, function (exists) {
+      resolve(exists);
+    });
+  });
+};
+
 
 module.exports = GStore;
