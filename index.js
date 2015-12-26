@@ -23,7 +23,7 @@ function GStore(config) {
     Promise.promisifyAll(bucket);
 }
 
-util.inherits(GStore baseStore);
+util.inherits(GStore, baseStore);
 
 GStore.prototype.save = function(image) {
     var _self = this;
@@ -36,8 +36,8 @@ GStore.prototype.save = function(image) {
     return this.getUniqueFileName(this, image, targetDir).then(function (filename) {
         targetFilename = filename
         var opts = {
-            destination: targetDir+ targetFilename;
-        }
+            destination: targetDir+ targetFilename
+        };
         return bucket.upload(image.path, opts);
     }).then(function () {
         return googleStoragePath + targetDir + targetFilename;

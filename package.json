@@ -1,6 +1,6 @@
 {
   "name": "ghost-google-cloud-storage",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A simple plugin to add Google Cloud Storage support for Ghost Blog",
   "main": "index.js",
   "scripts": {
