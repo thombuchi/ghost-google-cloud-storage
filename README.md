@@ -30,4 +30,4 @@ Add `storage` block to file `config.js` in each environment as below:
     },
 
 Future updates -->
-Add possibility to change asset domain. //right now it uses the default  `bucket_name..storage.googleapis.com/`
+Add possibility to change asset domain. Right now it uses the default  `bucket_name.storage.googleapis.com/
