@@ -49,7 +49,7 @@ GStore.prototype.save = function(image) {
 };
 
 // middleware for serving the files
-S3Store.prototype.serve = function() {
+GStore.prototype.serve = function() {
     // a no-op, these are absolute URLs
     return function (req, res, next) {
       next();
@@ -57,4 +57,4 @@ S3Store.prototype.serve = function() {
 };
 
 
-module.exports = S3Store;
+module.exports = GStore;
