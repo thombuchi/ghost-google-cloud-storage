@@ -12,6 +12,7 @@ var fs          = require('fs'),
     bucket;
 
 function GStore(config) {
+    baseStore.call(this);
     options = config || {};
 
     var gcs = gcloud.storage({
@@ -52,7 +53,7 @@ GStore.prototype.save = function(image) {
             file.makePublic(function(err, apiResponse) {
                 if(err) {
                     reject(err);
-                    return; 
+                    return;
                 }
                 resolve();
                 return;
@@ -83,5 +84,14 @@ GStore.prototype.exists = function (filename) {
   });
 };
 
+GStore.prototype.delete = function(filename) {
+  return new Promise(function (resolve, reject) {
+    var file = this.bucket.file(filename);
+    file.delete(function(err, apiResponse) {
+      if (err) { return reject(err); }
+      resolve(apiResponse);
+    });
+  });
+};
 
 module.exports = GStore;
