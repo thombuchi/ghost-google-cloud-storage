@@ -35,4 +35,5 @@ Add possibility to change asset domain. Right now it uses the default  `bucket_n
 
 ## Contrinutors
 thombuchi
+
 prenaudin
