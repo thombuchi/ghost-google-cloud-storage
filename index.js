@@ -4,7 +4,7 @@ var fs          = require('fs'),
     path        = require('path'),
     Promise     = require('bluebird'),
     util        = require('util'),
-    gcloud      = require('gcloud'),
+    storage     = require('@google-cloud/storage'),
     errors      = require('../../core/server/errors'),
     utils       = require('../../core/server/utils'),
     baseStore   = require('../../core/server/storage/base'),
@@ -15,7 +15,7 @@ function GStore(config) {
     baseStore.call(this);
     options = config || {};
 
-    var gcs = gcloud.storage({
+    var gcs = storage({
         projectId: options.projectId,
         keyFilename: options.key
     });
@@ -77,12 +77,23 @@ GStore.prototype.serve = function() {
 };
 
 GStore.prototype.exists = function (filename) {
-  return new Promise(function (resolve) {
-    fs.exists(filename, function (exists) {
-      resolve(exists);
+  return this.bucket.file(filename).exists();
+};
+
+GStore.prototype.read = function (filename) {
+  var rs = this.bucket.file(filename).createReadStream(), contents = '';
+  return new Promise(function (resolve, reject) {
+    rs.on('error', function(err){
+      return reject(err);
+    });
+    rs.on('data', function(data){
+      contents += data;
+    });
+    rs.on('end', function(){
+      return resolve(content);
     });
   });
-};
+}
 
 GStore.prototype.delete = function(filename) {
   return new Promise(function (resolve, reject) {
