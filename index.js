@@ -1,108 +1,81 @@
 'use strict';
 
-var fs          = require('fs'),
-    path        = require('path'),
+var storage     = require('@google-cloud/storage'),
+    BaseStore   = require('ghost-storage-base'),
     Promise     = require('bluebird'),
-    util        = require('util'),
-    storage     = require('@google-cloud/storage'),
-    errors      = require('../../core/server/errors'),
-    utils       = require('../../core/server/utils'),
-    baseStore   = require('../../core/server/storage/base'),
-    options     = {},
-    bucket;
+    options     = {};
 
-function GStore(config) {
-    baseStore.call(this);
-    options = config || {};
+class GStore extends BaseStore {
+    constructor(config = {}){
+        super(config);
+        options = config;
 
-    var gcs = storage({
-        projectId: options.projectId,
-        keyFilename: options.key
-    });
-    bucket = gcs.bucket(options.bucket);
+        var gcs = storage({
+            projectId: options.projectId,
+            keyFilename: options.key
+        });
+        this.bucket = gcs.bucket(options.bucket);
+    }
 
-}
+    save(image) {
+        var _self = this;
+        if (!options) return Promise.reject('google cloud storage is not configured');
 
-util.inherits(GStore, baseStore);
+        var targetDir = _self.getTargetDir(),
+        googleStoragePath = 'https://' + options.bucket + '.storage.googleapis.com/',
+        targetFilename;
 
-GStore.prototype.save = function(image) {
-    var _self = this;
-    if (!options) return Promise.reject('google cloud storage is not configured');
-
-    var targetDir = _self.getTargetDir(),
-    googleStoragePath = 'https://' + options.bucket + '.storage.googleapis.com/',
-    targetFilename;
-
-    return this.getUniqueFileName(this, image, targetDir).then(function (filename) {
-        targetFilename = filename
-        var opts = {
-            destination: targetDir + targetFilename
-        };
         return new Promise(function(resolve, reject) {
-            bucket.upload(image.path, opts, function(err, file) {
-                if(err) {
-                    reject(err);
-                    return;
-                }
-                resolve(file);
-                return;
+            _self.getUniqueFileName(image, targetDir).then(function (filename) {
+                targetFilename = filename;
+                var opts = {
+                    destination: targetDir + targetFilename
+                };
+                return _self.bucket.upload(image.path, opts);
+            }).then(function(data){
+                var file = data[0];
+                return file.makePublic();
+            }).then(function (data) {
+                return resolve(googleStoragePath + targetDir + targetFilename);
+            }).catch(function (e) {
+                return reject(e);
             });
-        })
-    }).then(function(file){
-        return new Promise(function(resolve, reject) {
-            file.makePublic(function(err, apiResponse) {
-                if(err) {
-                    reject(err);
-                    return;
-                }
-                resolve();
-                return;
+        });
+    }
+
+    // middleware for serving the files
+    serve() {
+        // a no-op, these are absolute URLs
+        return function (req, res, next) { next(); };
+    }
+
+    exists (filename) {
+        var _self = this;
+        return new Promise(function(resolve, reject){
+            _self.bucket.file(filename).exists().then(function(data){
+                return resolve(data[0]);
             });
-        })
-    }).then(function () {
-        return googleStoragePath + targetDir + targetFilename;
-    }).catch(function (e) {
-        errors.logError(e);
-        return Promise.reject(e);
-    });
+        });
+    }
 
-};
+    read (filename) {
+      var rs = this.bucket.file(filename).createReadStream(), contents = '';
+      return new Promise(function (resolve, reject) {
+        rs.on('error', function(err){
+          return reject(err);
+        });
+        rs.on('data', function(data){
+          contents += data;
+        });
+        rs.on('end', function(){
+          return resolve(content);
+        });
+      });
+    }
 
-// middleware for serving the files
-GStore.prototype.serve = function() {
-    // a no-op, these are absolute URLs
-    return function (req, res, next) {
-      next();
-    };
-};
-
-GStore.prototype.exists = function (filename) {
-  return this.bucket.file(filename).exists();
-};
-
-GStore.prototype.read = function (filename) {
-  var rs = this.bucket.file(filename).createReadStream(), contents = '';
-  return new Promise(function (resolve, reject) {
-    rs.on('error', function(err){
-      return reject(err);
-    });
-    rs.on('data', function(data){
-      contents += data;
-    });
-    rs.on('end', function(){
-      return resolve(content);
-    });
-  });
+    delete (filename) {
+        return this.bucket.file(filename).delete();
+    }
 }
-
-GStore.prototype.delete = function(filename) {
-  return new Promise(function (resolve, reject) {
-    var file = this.bucket.file(filename);
-    file.delete(function(err, apiResponse) {
-      if (err) { return reject(err); }
-      resolve(apiResponse);
-    });
-  });
-};
 
 module.exports = GStore;

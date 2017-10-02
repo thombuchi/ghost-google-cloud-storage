@@ -7,7 +7,7 @@ A simple plugin to add Google Cloud Storage support for a Ghost Blog
 
 ## Create storage module
 
-Create index.js file with folder path 'content/storage/gcloud/index.js' (manually create folder if not exist)
+Create this file file with path 'core/server/adapters/storage/gcloud.js' (manually create folder if not exist)
 
     'use strict';
     module.exports = require('ghost-google-cloud-storage');
@@ -35,5 +35,5 @@ Add possibility to change asset domain. Right now it uses the default  `bucket_n
 
 ## Contrinutors
 thombuchi
-
 prenaudin
+gcochard
