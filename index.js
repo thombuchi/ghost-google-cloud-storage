@@ -15,6 +15,7 @@ class GStore extends BaseStore {
             keyFilename: options.key
         });
         this.bucket = gcs.bucket(options.bucket);
+        this.assetDomain = options.assetDomain || `${options.bucket}.storage.googleapis.com`;
     }
 
     save(image) {
@@ -22,7 +23,7 @@ class GStore extends BaseStore {
         if (!options) return Promise.reject('google cloud storage is not configured');
 
         var targetDir = _self.getTargetDir(),
-        googleStoragePath = 'https://' + options.bucket + '.storage.googleapis.com/',
+        googleStoragePath = `https://${this.assetDomain}/`,
         targetFilename;
 
         return new Promise(function(resolve, reject) {

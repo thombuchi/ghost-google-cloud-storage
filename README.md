@@ -37,12 +37,14 @@ Add a `storage` block to your `config.${GHOST_ENVIRONMENT}.json` as below:
         "projectId": "Your_project_id",
         "key": "Your_key_path",
         "bucket": "Your_bucket_name",
+        "assetDomain": "domain-for-bucket.example.com"
     }
 }
 ```
 
 Notes:
 - For the key path, if it is in the ghost root directory, just use the name of the file. Otherwise use an absolute path.
+- The `assetDomain` is an optional config entry, and is only required if you want to use a [custom domain](https://cloud.google.com/storage/docs/hosting-static-website) for your cloud storage bucket. Note that these instructions only allow for http, not https, as the storage servers do not present a custom certificate for your domain. Here is a [list of workarounds](https://cloud.google.com/storage/docs/static-website#https).
 
 ## Verify Ghost config
 ```bash
@@ -97,9 +99,6 @@ Running sudo command: systemctl start ghost_example-com
 You can access your blog at http://example.com
 
 ```
-
-## Future updates
-- Add feature to specify custom asset domain. Right now it uses the default `bucket_name.storage.googleapis.com/`
 
 ## Contributors
 - thombuchi
