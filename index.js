@@ -16,6 +16,12 @@ class GStore extends BaseStore {
         });
         this.bucket = gcs.bucket(options.bucket);
         this.assetDomain = options.assetDomain || `${options.bucket}.storage.googleapis.com`;
+        // only set insecure from config if assetDomain is set
+        if(options.hasOwnProperty('assetDomain')){
+            this.insecure = options.insecure;
+        }
+        // default max-age is 3600 for GCS, override to something more useful
+        this.maxAge = options.maxAge || 2678400;
     }
 
     save(image) {
@@ -23,19 +29,20 @@ class GStore extends BaseStore {
         if (!options) return Promise.reject('google cloud storage is not configured');
 
         var targetDir = _self.getTargetDir(),
-        googleStoragePath = `https://${this.assetDomain}/`,
+        googleStoragePath = `http${this.insecure?'':'s'}://${this.assetDomain}/`,
         targetFilename;
 
         return new Promise(function(resolve, reject) {
             _self.getUniqueFileName(image, targetDir).then(function (filename) {
                 targetFilename = filename;
                 var opts = {
-                    destination: targetDir + targetFilename
+                    destination: targetDir + targetFilename,
+                    metadata: {
+                        cacheControl: `public, max-age=${this.maxAge}`
+                    },
+                    public: true
                 };
                 return _self.bucket.upload(image.path, opts);
-            }).then(function(data){
-                var file = data[0];
-                return file.makePublic();
             }).then(function (data) {
                 return resolve(googleStoragePath + targetDir + targetFilename);
             }).catch(function (e) {
