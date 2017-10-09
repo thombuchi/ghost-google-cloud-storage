@@ -37,14 +37,18 @@ Add a `storage` block to your `config.${GHOST_ENVIRONMENT}.json` as below:
         "projectId": "Your_project_id",
         "key": "Your_key_path",
         "bucket": "Your_bucket_name",
-        "assetDomain": "domain-for-bucket.example.com"
+        "assetDomain": "domain-for-bucket.example.com",
+        "insecure": true,
+        "maxAge": "2678400"
     }
 }
 ```
 
 Notes:
 - For the key path, if it is in the ghost root directory, just use the name of the file. Otherwise use an absolute path.
-- The `assetDomain` is an optional config entry, and is only required if you want to use a [custom domain](https://cloud.google.com/storage/docs/hosting-static-website) for your cloud storage bucket. Note that these instructions only allow for http, not https, as the storage servers do not present a custom certificate for your domain. Here is a [list of workarounds](https://cloud.google.com/storage/docs/static-website#https).
+- The `assetDomain` is an optional config entry, and is only required if you want to use a [custom domain](https://cloud.google.com/storage/docs/hosting-static-website) for your cloud storage bucket. Note that these instructions only allow for http, not https, as the storage servers do not present a custom certificate for your domain. Here is a [list of workarounds](https://cloud.google.com/storage/docs/static-website#https). Pair with the `"insecure": true` option to use bare http URLs.
+- The `insecure` config is also optional, and defaults to false. Set to true if you are using a custom asset domain, and do not have https configured.
+- The `maxAge` is an optional config entry, and is only required if you want to set the cache-control's max age property. It defaults to 31 days (in seconds). This is desirable if you will not be deleting and re-uploading the same file multiple times, and will reduce your bandwidth usage when paired with a CDN. It can be overridden to set the max age to something else, smaller if you would like cache entries to be revalidated quicker, larger if you would like the cache entries to last for longer than 1 month.
 
 ## Verify Ghost config
 ```bash
