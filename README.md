@@ -108,3 +108,4 @@ You can access your blog at http://example.com
 - thombuchi
 - prenaudin
 - gcochard
+- zackify
