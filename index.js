@@ -25,15 +25,14 @@ class GStore extends BaseStore {
     }
 
     save(image) {
-        var _self = this;
         if (!options) return Promise.reject('google cloud storage is not configured');
 
-        var targetDir = _self.getTargetDir(),
+        var targetDir = this.getTargetDir(),
         googleStoragePath = `http${this.insecure?'':'s'}://${this.assetDomain}/`,
         targetFilename;
 
-        return new Promise(function(resolve, reject) {
-            _self.getUniqueFileName(image, targetDir).then(targetFilename => {
+        return new Promise((resolve, reject) => {
+            this.getUniqueFileName(image, targetDir).then(targetFilename => {
                 var opts = {
                     destination: targetDir + targetFilename,
                     metadata: {
@@ -41,7 +40,7 @@ class GStore extends BaseStore {
                     },
                     public: true
                 };
-                return _self.bucket.upload(image.path, opts);
+                return this.bucket.upload(image.path, opts);
             }).then(function (data) {
                 return resolve(googleStoragePath + targetDir + targetFilename);
             }).catch(function (e) {
@@ -57,9 +56,8 @@ class GStore extends BaseStore {
     }
 
     exists (filename) {
-        var _self = this;
-        return new Promise(function(resolve, reject){
-            _self.bucket.file(filename).exists().then(function(data){
+        return new Promise((resolve, reject) => {
+            this.bucket.file(filename).exists().then(function(data){
                 return resolve(data[0]);
             });
         });
