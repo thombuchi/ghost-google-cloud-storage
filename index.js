@@ -1,3 +1,8 @@
+// this package had a bug that made it unusable.
+// forked it and fixed and submitted a PR
+//module.exports = require('ghost-google-cloud-storage');
+// but for now...
+
 'use strict';
 
 var storage     = require('@google-cloud/storage'),
@@ -35,7 +40,7 @@ class GStore extends BaseStore {
             this.getUniqueFileName(image, targetDir).then(tf => {
                 targetFilename = tf;
                 var opts = {
-                    destination: targetDir + targetFilename,
+                    destination: targetFilename,
                     metadata: {
                         cacheControl: `public, max-age=${this.maxAge}`
                     },
@@ -43,7 +48,7 @@ class GStore extends BaseStore {
                 };
                 return this.bucket.upload(image.path, opts);
             }).then(function (data) {
-                return resolve(googleStoragePath + targetDir + targetFilename);
+                return resolve(googleStoragePath + targetFilename);
             }).catch(function (e) {
                 return reject(e);
             });
