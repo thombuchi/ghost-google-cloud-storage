@@ -112,3 +112,4 @@ You can access your blog at http://example.com
 - prenaudin
 - gcochard
 - zackify
+- nkirchhoffer
