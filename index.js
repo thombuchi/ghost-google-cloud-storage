@@ -1,3 +1,8 @@
+// this package had a bug that made it unusable.
+// forked it and fixed and submitted a PR
+//module.exports = require('ghost-google-cloud-storage');
+// but for now...
+
 'use strict';
 
 const { Storage } = require('@google-cloud/storage');
@@ -33,6 +38,7 @@ class GStore extends BaseStore {
         const targetDir = this.getTargetDir();
         const googleStoragePath = `http${this.insecure?'':'s'}://${this.assetDomain}/`;
         let targetFilename;
+
 
         const newFile = await this.getUniqueFileName(image, targetDir);
         targetFilename = newFile;
