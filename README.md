@@ -1,5 +1,8 @@
-# Ghost Google Cloud Storage Plugin
-A simple plugin to add Google Cloud Storage support for a Ghost Blog
+# Looking for mantainer
+This plugin is not updated for working on last ghost version.
+
+# Ghost Google Cloud Storage Plugin 
+A simple plugin to add Google Cloud Storage support for a Ghost Blog. 
 
 ## Installation
 ```bash
@@ -109,3 +112,4 @@ You can access your blog at http://example.com
 - prenaudin
 - gcochard
 - zackify
+- nkirchhoffer
